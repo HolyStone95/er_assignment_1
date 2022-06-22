@@ -1,0 +1,512 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>scripts.roboCop &mdash; er_assignment_1 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/fonts.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> er_assignment_1
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">er_assignment_1</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+<div class="git-ribbon">
+  <a href="http://github.com/SwissDataScienceCenter" rel="me">Join us on GitHub</a>
+</div>
+
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>scripts.roboCop</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for scripts.roboCop</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: roboCop</span>
+<span class="sd">  :platform: Unix</span>
+<span class="sd">  :synopsis: Python module representing the robot and its knowledge</span>
+
+<span class="sd">.. moduleauthor:: Iacopo Pietrasnta &lt;iacopo.pietrasanta@gmail.com&gt;</span>
+
+<span class="sd">This node represents the robot entity, which can perform 3</span>
+<span class="sd">diffent activities:</span>
+
+<span class="sd">- Ask for an hint</span>
+<span class="sd">- Query the oracle about candidate CONSISTENT hypo</span>
+<span class="sd">- Call the action for navigating the ambient</span>
+
+<span class="sd">The distinction between the first two aforementioned activities</span>
+<span class="sd">is managed by a server for service roboCopActs that, based on the value </span>
+<span class="sd">it retrieves from the request, calls one of these two services, </span>
+<span class="sd">through clients:</span>
+
+<span class="sd">- ask_for_hint</span>
+<span class="sd">- query_oracle</span>
+
+<span class="sd">The first returns an hint which is then stored in the ontology</span>
+<span class="sd">by this node, and the second one returns True if the interrogation</span>
+<span class="sd">of the oracle about a CONSISTENT hypo has positive outcome,</span>
+<span class="sd">otherwise False.</span>
+<span class="sd">In the third case we call the function called nav_client that will</span>
+<span class="sd">populate the action message and call the action server.</span>
+<span class="sd">The full annotations for the two services are in their provider files,</span>
+<span class="sd">query_oracle.py, hint_oracle.py and navigation.py.</span>
+<span class="sd">The CopMsgResponse for roboCopActs service response is populated </span>
+<span class="sd">accordingly, and sent back to client in the main logic of the </span>
+<span class="sd">system, to continue with the game of Cluedo.</span>
+
+<span class="sd">A CONSISTENT hypo is gathered by a function that each time a new hint</span>
+<span class="sd">is stored, interrogates the ontology. If a CONSISTENT hypothesis</span>
+<span class="sd">is found, it is stored into a queue for managing the priority</span>
+<span class="sd">of discoveries on cadidates hypos, and a parameter in ros server</span>
+<span class="sd">is set to True, changing the transistions of states in robot_controller.py</span>
+<span class="sd">i.e. the system logic, representing the knowledge of the robot of </span>
+<span class="sd">having found a candidate hypo for interrogating the oracle.</span>
+
+<span class="sd">Subscribes to: </span>
+<span class="sd">              None</span>
+<span class="sd">  </span>
+<span class="sd">Publishes to: </span>
+<span class="sd">              None</span>
+<span class="sd">  </span>
+<span class="sd">Service : </span>
+<span class="sd">              /roboCopActs to perform an action</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">queue</span> <span class="k">as</span> <span class="nn">qu</span>
+<span class="kn">import</span> <span class="nn">rospy</span> <span class="k">as</span> <span class="nn">rp</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">actionlib</span>
+<span class="kn">from</span> <span class="nn">armor_api.armor_client</span> <span class="kn">import</span> <span class="n">ArmorClient</span>
+<span class="kn">from</span> <span class="nn">er_assignment_1.srv</span> <span class="kn">import</span> <span class="n">CopMsg</span><span class="p">,</span> <span class="n">Hint</span><span class="p">,</span> <span class="n">HypoID</span><span class="p">,</span> <span class="n">CopMsgResponse</span><span class="p">,</span> <span class="n">HypoIDResponse</span><span class="p">,</span> <span class="n">HintRequest</span>
+<span class="kn">from</span> <span class="nn">er_assignment_1.srv</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">er_assignment_1.msg</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">actual_loc</span> <span class="o">=</span> <span class="s2">&quot;Temple&quot;</span>
+
+<span class="n">hint_client</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="sd">&quot;&quot;&quot; global variable to store client of service ask_for_hint.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">query_client</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="sd">&quot;&quot;&quot; global variable to store client of service query_oracle.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">consistent</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="sd">&quot;&quot;&quot; global variable to store consistent hypothesis.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">armor_client</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="sd">&quot;&quot;&quot; global variable to store client of armor service.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">checked</span><span class="o">=</span><span class="p">[]</span>
+<span class="sd">&quot;&quot;&quot;list: empty list for storing already checked consistent hypothesis</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">rooms</span><span class="o">=</span><span class="p">[</span>
+    <span class="s1">&#39;Ballroom&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Billiard_room&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Conservatory&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Dining_room&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Kitchen&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Hall&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Library&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Lounge&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Study&#39;</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;list: list for storing the rooms names used for navigation</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="srvClbk"><a class="viewcode-back" href="../../index.html#scripts.roboCop.srvClbk">[docs]</a><span class="k">def</span> <span class="nf">srvClbk</span><span class="p">(</span><span class="n">req</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Callback function for SherlBotActs service .</span>
+<span class="sd">    </span>
+<span class="sd">        Args:</span>
+<span class="sd">            req (CopMsgRequest): composed of a boolean used for distinguishing different requests</span>
+<span class="sd">            </span>
+<span class="sd">    </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            res(CopMsgResponse): depending on the request&#39;s values, it is populated accordingly</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            None</span>
+<span class="sd">    </span>
+<span class="sd">        Note:</span>
+<span class="sd">            If req is True, through query_client calls for query_oracle service.</span>
+<span class="sd">            If req is False, through hint_client calls for ask_for_hint service.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+	
+    <span class="k">global</span> <span class="n">hint_client</span><span class="p">,</span> <span class="n">query_client</span><span class="p">,</span> <span class="n">consistent</span><span class="p">,</span> <span class="n">armor_client</span><span class="p">,</span> <span class="n">checked</span><span class="p">,</span> <span class="n">rooms</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">CopMsgResponse</span><span class="p">()</span>
+    
+    
+    <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;clue&quot;</span><span class="p">:</span>
+        <span class="n">rp</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span><span class="s1">&#39;ask_for_hint&#39;</span><span class="p">)</span>
+        <span class="n">hint</span> <span class="o">=</span> <span class="n">hint_client</span><span class="p">()</span>
+        
+        <span class="n">gatherHint</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span>
+        <span class="n">checkConsistency</span><span class="p">()</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">validation</span> <span class="o">=</span> <span class="kc">True</span>
+		
+    <span class="k">elif</span> <span class="n">req</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;query&quot;</span><span class="p">:</span>
+        <span class="n">rp</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span><span class="s1">&#39;query_oracle&#39;</span><span class="p">)</span>
+        <span class="n">iD</span> <span class="o">=</span> <span class="n">consistent</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">query_client</span><span class="p">(</span><span class="n">iD</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">valid</span><span class="o">.</span><span class="n">validation</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> 
+            <span class="n">checked</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iD</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">validation</span> <span class="o">=</span> <span class="n">valid</span><span class="o">.</span><span class="n">validation</span>
+        
+    <span class="k">elif</span> <span class="n">req</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;nav&quot;</span><span class="p">:</span>
+        <span class="n">hasHypo</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;hasHypo&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">hasHypo</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">rp</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s1">&#39;Entered in the Nav.Hasypo&#39;</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">nav_client</span><span class="p">(</span><span class="n">rp</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s1">&#39;Temple&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rp</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s1">&#39;Entered in the Nav.NOT.Hasypo&#39;</span><span class="p">)</span>
+            <span class="n">nextRoom</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">rooms</span><span class="p">)</span>
+            <span class="n">nextRoom</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="n">nextRoom</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">nav_client</span><span class="p">(</span><span class="n">nextRoom</span><span class="p">)</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">validation</span> <span class="o">=</span> <span class="kc">True</span>
+            
+    <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="nav_client"><a class="viewcode-back" href="../../index.html#scripts.roboCop.nav_client">[docs]</a><span class="k">def</span> <span class="nf">nav_client</span><span class="p">(</span><span class="n">desired</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Function for calling the navigation action</span>
+<span class="sd">    </span>
+<span class="sd">            Args:</span>
+<span class="sd">                desired (int list): list of two elements represesenting</span>
+<span class="sd">                desired planar position</span>
+<span class="sd">            </span>
+<span class="sd">            Returns:</span>
+<span class="sd">                client.get_result() (NavigationResult): action result</span>
+<span class="sd">    </span>
+<span class="sd">            Raises:</span>
+<span class="sd">                None</span>
+<span class="sd">    </span>
+<span class="sd">            Note:</span>
+<span class="sd">                Populates a NavigationGoal msg with the desired position</span>
+<span class="sd">                and make the call with a client.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">actionlib</span><span class="o">.</span><span class="n">SimpleActionClient</span><span class="p">(</span>
+    <span class="s1">&#39;navigation_action&#39;</span><span class="p">,</span>
+     <span class="n">er_assignment_1</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">NavigationAction</span><span class="p">)</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">wait_for_server</span><span class="p">()</span>
+        <span class="n">goal</span> <span class="o">=</span> <span class="n">er_assignment_1</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">NavigationGoal</span><span class="p">()</span>
+        <span class="n">goal</span><span class="o">.</span><span class="n">desired_x</span> <span class="o">=</span> <span class="n">desired</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">goal</span><span class="o">.</span><span class="n">desired_y</span> <span class="o">=</span> <span class="n">desired</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">goal</span><span class="o">.</span><span class="n">actual_x</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="n">actual_loc</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">goal</span><span class="o">.</span><span class="n">actual_y</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="n">actual_loc</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">send_goal</span><span class="p">(</span><span class="n">goal</span><span class="p">)</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">wait_for_result</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">rp</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="n">actual_loc</span><span class="p">))</span>
+        <span class="n">rp</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="n">actual_loc</span><span class="p">,</span><span class="n">desired</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">get_result</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="gatherHint"><a class="viewcode-back" href="../../index.html#scripts.roboCop.gatherHint">[docs]</a><span class="k">def</span> <span class="nf">gatherHint</span><span class="p">(</span><span class="n">hint</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        saveHint function is exploited to save hint within the ontology .</span>
+<span class="sd">    </span>
+<span class="sd">        Args:</span>
+<span class="sd">            hint (HintResponse): the new hint receiced from the oracle, to be stored in the ontology</span>
+<span class="sd">            </span>
+<span class="sd">    </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">    </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            None</span>
+<span class="sd">    </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Based on the keyword identifier of the type of hint, it is saved in the ontology</span>
+<span class="sd">            accordingly</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">armor_client</span>
+    
+    <span class="k">if</span> <span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;where&#39;</span><span class="p">:</span>
+            <span class="n">armor_client</span><span class="o">.</span><span class="n">manipulation</span><span class="o">.</span><span class="n">add_ind_to_class</span><span class="p">(</span><span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;PLACE&#39;</span><span class="p">)</span>
+            <span class="n">armor_client</span><span class="o">.</span><span class="n">manipulation</span><span class="o">.</span><span class="n">add_ind_to_class</span><span class="p">(</span><span class="s1">&#39;HP&#39;</span><span class="o">+</span> <span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;HYPOTHESIS&#39;</span><span class="p">)</span>
+            <span class="n">armor_client</span><span class="o">.</span><span class="n">manipulation</span><span class="o">.</span><span class="n">disj_inds_of_class</span><span class="p">(</span><span class="s1">&#39;PLACE&#39;</span><span class="p">)</span>
+            <span class="n">armor_client</span><span class="o">.</span><span class="n">manipulation</span><span class="o">.</span><span class="n">add_objectprop_to_ind</span><span class="p">(</span><span class="s1">&#39;where&#39;</span><span class="p">,</span> <span class="s1">&#39;HP&#39;</span><span class="o">+</span> <span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;who&#39;</span><span class="p">:</span>
+            <span class="n">armor_client</span><span class="o">.</span><span class="n">manipulation</span><span class="o">.</span><span class="n">add_ind_to_class</span><span class="p">(</span><span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;PERSON&#39;</span><span class="p">)</span>
+            <span class="n">armor_client</span><span class="o">.</span><span class="n">manipulation</span><span class="o">.</span><span class="n">add_ind_to_class</span><span class="p">(</span><span class="s1">&#39;HP&#39;</span><span class="o">+</span> <span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;HYPOTHESIS&#39;</span><span class="p">)</span>
+            <span class="n">armor_client</span><span class="o">.</span><span class="n">manipulation</span><span class="o">.</span><span class="n">disj_inds_of_class</span><span class="p">(</span><span class="s1">&#39;PERSON&#39;</span><span class="p">)</span>
+            <span class="n">armor_client</span><span class="o">.</span><span class="n">manipulation</span><span class="o">.</span><span class="n">add_objectprop_to_ind</span><span class="p">(</span><span class="s1">&#39;who&#39;</span> <span class="p">,</span> <span class="s1">&#39;HP&#39;</span><span class="o">+</span> <span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;what&#39;</span><span class="p">:</span>
+            <span class="n">armor_client</span><span class="o">.</span><span class="n">manipulation</span><span class="o">.</span><span class="n">add_ind_to_class</span><span class="p">(</span><span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;WEAPON&#39;</span><span class="p">)</span>
+            <span class="n">armor_client</span><span class="o">.</span><span class="n">manipulation</span><span class="o">.</span><span class="n">add_ind_to_class</span><span class="p">(</span><span class="s1">&#39;HP&#39;</span><span class="o">+</span> <span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;HYPOTHESIS&#39;</span><span class="p">)</span>
+            <span class="n">armor_client</span><span class="o">.</span><span class="n">manipulation</span><span class="o">.</span><span class="n">disj_inds_of_class</span><span class="p">(</span><span class="s1">&#39;WEAPON&#39;</span><span class="p">)</span>
+            <span class="n">armor_client</span><span class="o">.</span><span class="n">manipulation</span><span class="o">.</span><span class="n">add_objectprop_to_ind</span><span class="p">(</span><span class="s1">&#39;what&#39;</span><span class="p">,</span> <span class="s1">&#39;HP&#39;</span><span class="o">+</span> <span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="p">,</span> <span class="n">hint</span><span class="o">.</span><span class="n">hint</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    
+    <span class="n">armor_client</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">save_ref_with_inferences</span><span class="p">(</span><span class="s1">&#39;/root/ros_ws/src/er_assignment_1/inferred.owl&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="checkConsistency"><a class="viewcode-back" href="../../index.html#scripts.roboCop.checkConsistency">[docs]</a><span class="k">def</span> <span class="nf">checkConsistency</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function that once the robot collects an hint,</span>
+<span class="sd">        interrogates the ontology for checking the hypothesis </span>
+<span class="sd">        consistency</span>
+<span class="sd">    </span>
+<span class="sd">        Args:</span>
+<span class="sd">            None</span>
+<span class="sd">            </span>
+<span class="sd">    </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">    </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            None</span>
+<span class="sd">    </span>
+<span class="sd">        Note:</span>
+<span class="sd">            CONSISTENT hypothesis are COMPLETED but NOT INCONSISTENT.</span>
+<span class="sd">            This function keeps also track of already checked CONSISTENT</span>
+<span class="sd">            hypothesis</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">armor_client</span><span class="p">,</span> <span class="n">consistent</span><span class="p">,</span> <span class="n">checked</span>
+    
+    <span class="n">compl</span> <span class="o">=</span> <span class="n">armor_client</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">ind_b2_class</span><span class="p">(</span><span class="s1">&#39;COMPLETED&#39;</span><span class="p">)</span>
+    <span class="n">incon</span> <span class="o">=</span> <span class="n">armor_client</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">ind_b2_class</span><span class="p">(</span><span class="s1">&#39;INCONSISTENT&#39;</span><span class="p">)</span>
+	
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">compl</span><span class="p">)):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">compl</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">compl</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">)</span>
+        <span class="n">compl</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">compl</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+           
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">incon</span><span class="p">)):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">incon</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">incon</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">)</span>
+        <span class="n">incon</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">incon</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>   
+	
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">checked</span><span class="p">)):</span>
+        <span class="n">compl</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">checked</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+       
+    <span class="nb">print</span><span class="p">(</span><span class="n">compl</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">incon</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">checked</span><span class="p">)</span>    
+		
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">compl</span><span class="p">)):</span>
+        <span class="k">try</span><span class="p">:</span>  
+            <span class="n">index</span> <span class="o">=</span> <span class="n">incon</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">compl</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">rp</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="s1">&#39;hasHypo&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">consistent</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">compl</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
+    
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../index.html#scripts.roboCop.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Main function </span>
+<span class="sd">    </span>
+<span class="sd">        Args:</span>
+<span class="sd">            None</span>
+<span class="sd">            </span>
+<span class="sd">    </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">    </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            None</span>
+<span class="sd">    </span>
+<span class="sd">        Note:</span>
+<span class="sd">            It initializes two clients (&quot;ask_for_hint&quot;, &quot;query_oracle&quot; services)</span>
+<span class="sd">            and the armor client to work directly on the ontology.</span>
+<span class="sd">            It initializes a server for service &quot;ShelBotActs&quot;</span>
+<span class="sd">            Moreover, a queue has been defined for storing CONSISTENT hypo.</span>
+<span class="sd">            </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">armor_client</span><span class="p">,</span> <span class="n">hint_client</span><span class="p">,</span> <span class="n">query_client</span><span class="p">,</span> <span class="n">consistent</span><span class="p">,</span> <span class="n">actual_loc</span>
+    
+    <span class="n">rp</span><span class="o">.</span><span class="n">init_node</span><span class="p">(</span><span class="s1">&#39;roboCop&#39;</span><span class="p">)</span>
+    <span class="n">hint_client</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span><span class="s1">&#39;ask_for_hint&#39;</span><span class="p">,</span> <span class="n">Hint</span><span class="p">)</span>
+    <span class="n">query_client</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span><span class="s1">&#39;query_oracle&#39;</span><span class="p">,</span> <span class="n">HypoID</span><span class="p">)</span>
+    <span class="n">consistent</span> <span class="o">=</span> <span class="n">qu</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+    <span class="n">armor_client</span> <span class="o">=</span> <span class="n">ArmorClient</span><span class="p">(</span><span class="s1">&#39;tutorial&#39;</span><span class="p">,</span> <span class="s1">&#39;ontoTest&#39;</span><span class="p">)</span>
+    <span class="n">armor_client</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">load_ref_from_file</span><span class="p">(</span><span class="s1">&#39;/root/ros_ws/src/er_assignment_1/cluedo_ontology(1).owl&#39;</span><span class="p">,</span> <span class="s1">&#39;http://www.emarolab.it/cluedo-ontology&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;PELLET&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">armor_client</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">set_log_to_file</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span><span class="s1">&#39;/root/ros_ws/src/er_assignment_1/logs/log.log&#39;</span><span class="p">)</span>
+    <span class="n">srv</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span><span class="s1">&#39;roboCopActs&#39;</span><span class="p">,</span> <span class="n">CopMsg</span><span class="p">,</span> <span class="n">srvClbk</span><span class="p">)</span>
+    <span class="n">rp</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Iacopo Pietrasanta.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

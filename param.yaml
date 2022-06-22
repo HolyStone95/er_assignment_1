@@ -1,0 +1,63 @@
+
+ID1_1: ['where', 'Ballroom']
+ID1_2: ['where', 'Conservatory']
+ID1_3: ['who', 'Rev.Green']
+ID1_4: ['what', 'Dagger']
+
+
+ID2_1: ['where', 'Study']
+ID2_2: ['who', 'Col.Mustard']
+ID2_3: ['what', 'Rope']
+
+
+ID3_1: ['where', 'Kitchen']
+ID3_2: ['who', 'Prof.Plum']
+ID3_3: ['what', 'Wrench']
+ID3_4: ['who', 'Mrs.Peacock']
+
+ID4_1: ['where', 'Library']
+ID4_2: ['who', 'Mrs.White']
+ID4_3: ['what', 'LeadPipe']
+ID4_4: ['where', 'Diningoom']
+
+ID5_1: ['where', 'Conservatory']
+ID5_2: ['who', 'Mrs.Peacock']
+ID5_3: ['what', 'Revolver']
+
+ID6_1: ['where', 'BilliardRoom']
+ID6_2: ['who', 'Miss.Scarlett']
+ID6_3: ['what', 'Candlestick']
+
+ID7_1: ['where', 'DiningRoom']
+ID7_2: ['who', 'Cpt.Brown']
+ID7_3: ['what', 'TennisRacket']
+ID7_4: ['what', 'Hammer']
+
+ID8_1: ['where', 'Hall']
+ID8_2: ['who', 'Srg.Gray']
+ID8_3: ['who', 'Rev.Green']
+ID8_4: ['what', 'Pencil']
+
+ID9_1: ['where', 'Lounge']
+ID9_2: ['who', 'Dr.Orchid']
+ID9_3: ['what', 'Tomahawk']
+
+Game_over: False
+actual_loc: 'Temple'
+hasHypo: False
+
+# True value 
+True_id: 'ID2'
+
+# room coordinates
+Ballroom: [1.0,2.0]
+Billiard_room: [1.0,3.0]
+Conservatory: [1.0,4.0]
+Dining_room: [0.5,4.0]
+Hall: [-0.5,4.0]
+Kitchen: [-1.0, 4.0]
+Library: [-1.0,3.0]
+Lounge: [-1.0,2.0]
+Study: [-1.0,1.0]
+Temple: [0.0,0.0]
+

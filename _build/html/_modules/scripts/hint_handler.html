@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>scripts.hint_handler &mdash; er_assignment_1 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/fonts.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> er_assignment_1
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">er_assignment_1</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+<div class="git-ribbon">
+  <a href="http://github.com/SwissDataScienceCenter" rel="me">Join us on GitHub</a>
+</div>
+
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>scripts.hint_handler</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for scripts.hint_handler</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: hint_handler</span>
+<span class="sd">  :platform: Unix</span>
+<span class="sd">  :synopsis: Python module that has the information about hints</span>
+
+<span class="sd">.. moduleauthor:: Iacopo Pietrasanta &lt;iacopo.pietrasanta@gmail.com&gt;</span>
+
+<span class="sd">This module represents the &quot;oracle&quot;, the entity that in the assignment </span>
+<span class="sd">specification it&#39;s presented as the entity that knows the correct hypothesis</span>
+<span class="sd">(i.e. knows when, where and who commited the crime),and has a list of all</span>
+<span class="sd">possible hints identifiers.</span>
+
+<span class="sd">It&#39;s implementation is split in two services servers, this one provides</span>
+<span class="sd">a new hint to the robot when requested.</span>
+
+<span class="sd">Subscribes to: </span>
+<span class="sd">              None</span>
+<span class="sd">  </span>
+<span class="sd">Publishes to: </span>
+<span class="sd">              None</span>
+<span class="sd">  </span>
+<span class="sd">Service : </span>
+<span class="sd">              /ask_for_hint to ask the oracle for a new hint</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">er_assignment_1.srv</span> <span class="kn">import</span> <span class="n">Hint</span><span class="p">,</span> <span class="n">HintResponse</span>
+
+
+<span class="n">IDs</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="sd">&quot;&quot;&quot;List of strings to store possible hints identifiers</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="hintSrvClbk"><a class="viewcode-back" href="../../index.html#scripts.hint_handler.hintSrvClbk">[docs]</a><span class="k">def</span> <span class="nf">hintSrvClbk</span><span class="p">(</span><span class="n">req</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Service callback for the ask_for_hint service server</span>
+<span class="sd">    </span>
+<span class="sd">        Args:</span>
+<span class="sd">            req (HintRequest): Empty request</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            res (HintResponse): a list of 3 strings representing a particular hint</span>
+<span class="sd">    </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            None</span>
+<span class="sd">    </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Every time a particular hint is sent back, it&#39;s removed</span>
+<span class="sd">            from the list of possible hints, and its value is removed</span>
+<span class="sd">            on the parameter server to avoid repetitions of alredy </span>
+<span class="sd">            seen information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">IDs</span>
+    
+    <span class="n">nextID</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">IDs</span><span class="p">)</span>
+    
+    <span class="n">res</span> <span class="o">=</span> <span class="n">HintResponse</span><span class="p">()</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">hint</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="n">nextID</span><span class="p">)</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">hint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nextID</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+    
+    <span class="n">IDs</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">nextID</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">delete_param</span><span class="p">(</span><span class="n">nextID</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../index.html#scripts.hint_handler.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Main function</span>
+<span class="sd">    </span>
+<span class="sd">        Args:</span>
+<span class="sd">            None</span>
+<span class="sd">            </span>
+<span class="sd">    </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">    </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            None</span>
+<span class="sd">    </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Initializes possible hints identifiers.</span>
+<span class="sd">            Initializes the server.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">IDs</span>
+
+    <span class="n">rospy</span><span class="o">.</span><span class="n">init_node</span><span class="p">(</span><span class="s1">&#39;hint_provider&#39;</span><span class="p">)</span>
+    
+    <span class="n">IDs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ID1_1&quot;</span><span class="p">,</span> <span class="s2">&quot;ID1_2&quot;</span><span class="p">,</span> <span class="s2">&quot;ID1_3&quot;</span><span class="p">,</span> <span class="s2">&quot;ID1_4&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;ID2_1&quot;</span><span class="p">,</span> <span class="s2">&quot;ID2_2&quot;</span><span class="p">,</span> <span class="s2">&quot;ID2_3&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;ID3_1&quot;</span><span class="p">,</span> <span class="s2">&quot;ID3_2&quot;</span><span class="p">,</span> <span class="s2">&quot;ID3_3&quot;</span><span class="p">,</span> <span class="s2">&quot;ID3_4&quot;</span><span class="p">,</span> 
+           <span class="s2">&quot;ID4_1&quot;</span><span class="p">,</span> <span class="s2">&quot;ID4_2&quot;</span><span class="p">,</span> <span class="s2">&quot;ID4_3&quot;</span><span class="p">,</span> <span class="s2">&quot;ID4_4&quot;</span><span class="p">,</span> 
+           <span class="s2">&quot;ID5_1&quot;</span><span class="p">,</span> <span class="s2">&quot;ID5_2&quot;</span><span class="p">,</span> <span class="s2">&quot;ID5_3&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;ID6_1&quot;</span><span class="p">,</span> <span class="s2">&quot;ID6_2&quot;</span><span class="p">,</span> <span class="s2">&quot;ID6_3&quot;</span><span class="p">,</span> 
+           <span class="s2">&quot;ID7_1&quot;</span><span class="p">,</span> <span class="s2">&quot;ID7_2&quot;</span><span class="p">,</span> <span class="s2">&quot;ID7_3&quot;</span><span class="p">,</span> <span class="s2">&quot;ID7_4&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;ID8_1&quot;</span><span class="p">,</span> <span class="s2">&quot;ID8_2&quot;</span><span class="p">,</span> <span class="s2">&quot;ID8_3&quot;</span><span class="p">,</span> <span class="s2">&quot;ID8_4&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;ID9_1&quot;</span><span class="p">,</span> <span class="s2">&quot;ID9_2&quot;</span><span class="p">,</span> <span class="s2">&quot;ID9_3&quot;</span><span class="p">]</span>
+    
+    <span class="n">hint_srv</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span><span class="s1">&#39;ask_for_hint&#39;</span><span class="p">,</span> <span class="n">Hint</span><span class="p">,</span> <span class="n">hintSrvClbk</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Iacopo Pietrasanta.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

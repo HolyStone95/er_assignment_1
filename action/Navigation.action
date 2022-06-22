@@ -1,0 +1,7 @@
+float64 desired_x
+float64 desired_y
+float64 actual_x
+float64 actual_y
+---
+bool ok
+---

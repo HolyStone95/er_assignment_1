@@ -1,0 +1,13 @@
+<?xml version= "1.0"?>
+
+<launch>
+	<rosparam command="load" file="$(find er_assignment_1)/param.yaml"/>
+	<node pkg="armor" type="execute" name="armor_service" args="it.emarolab.armor.ARMORMainService"/>
+	
+	<node name="hint_handler" pkg="er_assignment_1" type="hint_handler.py"/>
+	<node name="accusation_handler" pkg="er_assignment_1" type="accusation_handler.py"/>
+	<node name="navigation" pkg="er_assignment_1" type="navigation.py" output="screen"/>
+	<node name="roboCop" pkg="er_assignment_1" type="roboCop.py" output="screen"/>
+	<node name="game_logic" pkg="er_assignment_1" type="game_logic.py" required="true"/>
+	
+</launch>

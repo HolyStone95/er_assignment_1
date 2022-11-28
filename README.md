@@ -10,7 +10,7 @@ This package contains the source code implemented during the first assignment of
   - [Hints and Locations](#hints-and-locations)
   - [Software Architecture and Functioning](#software-architecture-and-functioning)
   - [How to launch and additional documentation](#how-to-launch-and-additional-documentation)
-  
+
 ## Required packages
 
 The packages required are :
@@ -108,8 +108,8 @@ Here are the diagrams representing the overall architecture:
 ![alt comnponent](https://github.com/HolyStone95/er_assignment_1/blob/master/media/Component_UML.png)
 The finite state machine:
 ![alt fsm](https://github.com/HolyStone95/er_assignment_1/blob/master/media/FSM_UML.png)
-The most important execution flow of the program ( The navigation phase is the only one not present, cause it simply consist of a *waiting* serice ):
-![alt sequence](https://github.com/HolyStone95/RT1_Assignment1/blob/master/media/Sequence_INTEMPLE_UML.png)
+The most important execution flow of the program ( The navigation phase is the only one not present, cause it simply consist of a *waiting* service ):
+![alt sequence](https://github.com/HolyStone95/er_assignment_1/blob/master/media/Sequence_INTEMPLE_UML.png)
 
 ## How to launch and additional documentation
 

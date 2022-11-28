@@ -2,7 +2,7 @@
 
 This package contains the source code implemented during the first assignment of the Experimental Robotics Laboratory, course of the first semester of the second year of Robotics Engineering Master Degree course of University of Genoa, Italy.
 
-## index
+## Index
 
 - Index:
   - [Required packages](#required-packages)
